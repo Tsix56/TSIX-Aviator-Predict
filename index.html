@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>TSIX AVIATOR PREDICT</title>
@@ -12,94 +12,162 @@ body{
     text-align:center;
 }
 
-h1{
-    color:white;
-}
-
-.note{
-    color:red;
-    margin-bottom:20px;
+.box{
+    border:2px solid white;
+    padding:15px;
+    display:inline-block;
+    margin:10px;
 }
 
 input{
     padding:10px;
-    margin:10px;
     font-size:18px;
-    width:200px;
+    width:150px;
+    text-align:center;
 }
 
 button{
     padding:10px 20px;
     font-size:18px;
+    margin-top:15px;
     cursor:pointer;
 }
 
-.result{
-    margin-top:20px;
-    font-size:20px;
+#result{
+    margin-top:30px;
+    font-size:30px;
+    border:2px solid white;
+    padding:20px;
 }
+
+.red{
+    color:red;
+}
+
 </style>
 </head>
 
 <body>
 
-<h1>TSIX AVIATOR PREDICT</h1>
-
-<div class="note">
--Natao hanampy anao<br>
--Raha misy tsy mazava midira mp @ TSIX na Laroka man
+<!-- LOGIN -->
+<div id="login">
+    <h2>PASSWORD</h2>
+    <input type="password" id="pass">
+    <br>
+    <button onclick="check()">ENTER</button>
+    <p id="error" style="color:red;"></p>
 </div>
 
-<p>Code: <b>tsix56</b></p>
+<!-- APP -->
+<div id="app" style="display:none;">
 
-<input type="time" id="time" step="1"><br>
-<input type="number" id="tour" step="0.01" placeholder="Ex: 1.20"><br>
+<h1>AVIATOR PREDICT</h1>
 
-<button onclick="predict()">Predict</button>
+<p class="red">
+-Natao hanampy anao<br>
+-Raha misy tsy mazava mandefasa mp @TSIX na Laroka Man
+</p>
 
-<div class="result" id="result"></div>
+<div>
+    <div class="box">
+        <p>Heure : Minute : Seconde</p>
+        <input type="text" id="time" placeholder="12:19:50">
+    </div>
+
+    <div class="box">
+        <p>Cote</p>
+        <input type="number" id="cote" placeholder="1.76" step="0.01">
+    </div>
+</div>
+
+<br>
+<button onclick="predict()">PREDICT</button>
+
+<div id="result">RESULT</div>
+
+</div>
 
 <script>
-function addOneMinute(time){
-    let parts = time.split(":");
-    let date = new Date();
-    date.setHours(parts[0]);
-    date.setMinutes(parts[1]);
-    date.setSeconds(parts[2]);
 
-    date.setMinutes(date.getMinutes() + 1);
-
-    return date.toTimeString().split(" ")[0];
+// PASSWORD
+function check(){
+    let p = document.getElementById("pass").value;
+    if(p === "Tsix56"){
+        document.getElementById("login").style.display="none";
+        document.getElementById("app").style.display="block";
+    }else{
+        document.getElementById("error").innerText="Wrong password";
+    }
 }
 
+// FORMAT AUTO TIME
+document.getElementById("time").addEventListener("input", function(e){
+    let v = e.target.value.replace(/[^0-9]/g,"");
+    if(v.length >= 2) v = v.slice(0,2)+":"+v.slice(2);
+    if(v.length >= 5) v = v.slice(0,5)+":"+v.slice(5,7);
+    e.target.value = v;
+});
+
+// ADD TIME
+function addTime(time, sec){
+    let t = time.split(":");
+    let d = new Date();
+    d.setHours(t[0]);
+    d.setMinutes(t[1]);
+    d.setSeconds(t[2]);
+
+    d.setSeconds(d.getSeconds()+sec);
+
+    return d.toTimeString().slice(0,8);
+}
+
+// PREDICT
 function predict(){
     let time = document.getElementById("time").value;
-    let tour = parseFloat(document.getElementById("tour").value);
+    let cote = parseFloat(document.getElementById("cote").value);
 
-    if(!time || !tour){
-        alert("Fenoy tsara!");
+    if(!time || !cote){
+        alert("Ampidiro tsara!");
         return;
     }
 
-    let nextTime = addOneMinute(time);
-    let result = "";
+    let r = "";
 
-    if(tour >= 1.00 && tour <= 1.50){
-        result = "➡️ " + nextTime + " → 1.50 - 1.90";
+    if(cote >= 10){
+        r += addTime(time,64)+" → Tour violet 🟣<br>";
+        r += addTime(time,80)+" → Tour bleu 🔵<br>";
+        r += addTime(time,140)+" → Tour violet 🟣";
     }
-    else if(tour >= 1.51 && tour <= 1.99){
-        result = "➡️ " + nextTime + " → 2.00+ na =2";
+
+    else if(cote >=5){
+        r += addTime(time,80)+" →<br>";
+        r += "# violet 🟣 60%<br>";
+        r += "# rose 5-9.99 30%<br>";
+        r += "# rose 10+ 40%<br>";
+        r += "# bleu 🔵 30%<br><br>";
+        r += addTime(time,140)+" → Tour violet 🟣";
     }
-    else if(tour >= 2.00){
-        result = "➡️ " + nextTime + " → +2";
+
+    else if(cote >=2){
+        r += addTime(time,60)+" → violet 🟣<br>";
+        r += addTime(time,80)+" → violet 🟣<br>";
+        r += addTime(time,140)+" → violet 🟣 60%";
     }
+
+    else if(cote >=1.5){
+        r += addTime(time,80)+" → violet 🟣<br>";
+        r += addTime(time,140)+" → violet 🟣";
+    }
+
     else{
-        result = "Tsy fantatra";
+        r += addTime(time,80)+" → violet 🟣50% / bleu 🔵50%<br>";
+        r += addTime(time,140)+" → violet 🟣50% / bleu 🔵50%";
     }
 
-    document.getElementById("result").innerText = result;
+    document.getElementById("result").innerHTML = r;
 }
+
 </script>
 
 </body>
-  </html>
+</html>
