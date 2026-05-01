@@ -1,173 +1,205 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>TSIX AVIATOR PREDICT</title>
+<title>AVIATOR PREDICT</title>
 
 <style>
 body{
-    background:black;
+    background:#0b1220;
     color:white;
     font-family:Arial;
-    text-align:center;
-}
-
-.box{
-    border:2px solid white;
-    padding:15px;
-    display:inline-block;
-    margin:10px;
-}
-
-input{
-    padding:10px;
-    font-size:18px;
-    width:150px;
-    text-align:center;
-}
-
-button{
-    padding:10px 20px;
-    font-size:18px;
-    margin-top:15px;
-    cursor:pointer;
-}
-
-#result{
-    margin-top:30px;
-    font-size:30px;
-    border:2px solid white;
     padding:20px;
 }
 
-.red{
-    color:red;
+.container{
+    max-width:400px;
+    margin:auto;
 }
 
+.title{
+    text-align:center;
+    font-size:22px;
+    margin-bottom:10px;
+}
+
+.note{
+    color:red;
+    font-size:14px;
+    margin-bottom:20px;
+}
+
+input{
+    width:100%;
+    padding:15px;
+    margin-top:10px;
+    border-radius:15px;
+    border:none;
+    background:#1c2435;
+    color:white;
+    font-size:18px;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    margin-top:20px;
+    border:none;
+    border-radius:20px;
+    background:#7c3aed;
+    color:white;
+    font-size:20px;
+}
+
+.result{
+    margin-top:20px;
+}
+
+.box{
+    border:1px dashed #444;
+    padding:15px;
+    margin-top:10px;
+    border-radius:15px;
+}
+
+.card{
+    background:#2a1e5c;
+    padding:15px;
+    border-radius:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:18px;
+}
+
+.violet{
+    background:#5b21b6;
+}
+
+.bleu{
+    background:#1d4ed8;
+}
+
+.big{
+    font-size:20px;
+    font-weight:bold;
+}
 </style>
+
 </head>
 
 <body>
 
-<!-- LOGIN -->
+<div class="container">
+
 <div id="login">
-    <h2>PASSWORD</h2>
-    <input type="password" id="pass">
-    <br>
-    <button onclick="check()">ENTER</button>
-    <p id="error" style="color:red;"></p>
+    <h2>Mot de passe</h2>
+    <input type="password" id="pass" placeholder="Ampidiro ny mot de passe">
+    <button onclick="checkPass()">Entrer</button>
 </div>
 
-<!-- APP -->
-<div id="app" style="display:none;">
+<div id="app" style="display:none">
 
-<h1>AVIATOR PREDICT</h1>
+    <div class="title">AVIATOR PREDICT</div>
 
-<p class="red">
--Natao hanampy anao<br>
--Raha misy tsy mazava mandefasa mp @TSIX na Laroka Man
-</p>
-
-<div>
-    <div class="box">
-        <p>Heure : Minute : Seconde</p>
-        <input type="text" id="time" placeholder="12:19:50">
+    <div class="note">
+        - Natao hanampy anao<br>
+        - Ra misy tsy mazava dia mandefasa mp @ TSIX na Laroka man
     </div>
 
-    <div class="box">
-        <p>Cote</p>
-        <input type="number" id="cote" placeholder="1.76" step="0.01">
-    </div>
+    <label>Ora (HH:MM:SS)</label>
+    <input id="time" placeholder="12:19:50">
+
+    <label>Cote</label>
+    <input id="cote" placeholder="1.75">
+
+    <button onclick="predict()">PREDICT</button>
+
+    <div class="result" id="result"></div>
+
 </div>
-
-<br>
-<button onclick="predict()">PREDICT</button>
-
-<div id="result">RESULT</div>
 
 </div>
 
 <script>
 
-// PASSWORD
-function check(){
+function checkPass(){
     let p = document.getElementById("pass").value;
-    if(p === "Tsix56"){
+    if(p==="Tsix56"){
         document.getElementById("login").style.display="none";
         document.getElementById("app").style.display="block";
     }else{
-        document.getElementById("error").innerText="Wrong password";
+        alert("Diso mot de passe");
     }
 }
 
-// FORMAT AUTO TIME
-document.getElementById("time").addEventListener("input", function(e){
-    let v = e.target.value.replace(/[^0-9]/g,"");
-    if(v.length >= 2) v = v.slice(0,2)+":"+v.slice(2);
-    if(v.length >= 5) v = v.slice(0,5)+":"+v.slice(5,7);
-    e.target.value = v;
-});
-
-// ADD TIME
 function addTime(time, sec){
     let t = time.split(":");
-    let d = new Date();
-    d.setHours(t[0]);
-    d.setMinutes(t[1]);
-    d.setSeconds(t[2]);
+    let date = new Date();
+    date.setHours(t[0]);
+    date.setMinutes(t[1]);
+    date.setSeconds(t[2]);
 
-    d.setSeconds(d.getSeconds()+sec);
+    date.setSeconds(date.getSeconds()+sec);
 
-    return d.toTimeString().slice(0,8);
+    return date.toTimeString().split(" ")[0];
 }
 
-// PREDICT
 function predict(){
     let time = document.getElementById("time").value;
     let cote = parseFloat(document.getElementById("cote").value);
+    let res = document.getElementById("result");
 
-    if(!time || !cote){
-        alert("Ampidiro tsara!");
+    if(!time || isNaN(cote)){
+        alert("Fenoy tsara");
         return;
     }
 
-    let r = "";
+    res.innerHTML="";
+
+    function show(t, txt, color){
+        res.innerHTML += `
+        <div class="box">
+            <div class="card ${color}">
+                <span class="big">${t}</span>
+                <span>${txt}</span>
+            </div>
+        </div>`;
+    }
+
+    // === STRATEGIE ===
 
     if(cote >= 10){
-        r += addTime(time,64)+" → Tour violet 🟣<br>";
-        r += addTime(time,80)+" → Tour bleu 🔵<br>";
-        r += addTime(time,140)+" → Tour violet 🟣";
+        show(addTime(time,64),"🟣 Tour violet","violet");
+        show(addTime(time,80),"🔵 Tour bleu","bleu");
+        show(addTime(time,140),"🟣 Tour violet","violet");
     }
 
     else if(cote >=5){
-        r += addTime(time,80)+" →<br>";
-        r += "# violet 🟣 60%<br>";
-        r += "# rose 5-9.99 30%<br>";
-        r += "# rose 10+ 40%<br>";
-        r += "# bleu 🔵 30%<br><br>";
-        r += addTime(time,140)+" → Tour violet 🟣";
+        show(addTime(time,80),
+        "🟣 60% | 🌸 30% | 🔴 40% | 🔵 30%","violet");
+        show(addTime(time,140),"🟣 Tour violet","violet");
     }
 
     else if(cote >=2){
-        r += addTime(time,60)+" → violet 🟣<br>";
-        r += addTime(time,80)+" → violet 🟣<br>";
-        r += addTime(time,140)+" → violet 🟣 60%";
+        show(addTime(time,60),"🟣 Tour violet","violet");
+        show(addTime(time,80),"🟣 Tour violet","violet");
+        show(addTime(time,140),"🟣 60%","violet");
     }
 
     else if(cote >=1.5){
-        r += addTime(time,80)+" → violet 🟣<br>";
-        r += addTime(time,140)+" → violet 🟣";
+        show(addTime(time,80),"🟣 Tour violet","violet");
+        show(addTime(time,140),"🟣 Tour violet","violet");
     }
 
     else{
-        r += addTime(time,80)+" → violet 🟣50% / bleu 🔵50%<br>";
-        r += addTime(time,140)+" → violet 🟣50% / bleu 🔵50%";
+        show(addTime(time,80),"🟣 50% | 🔵 50%","violet");
+        show(addTime(time,140),"🟣 50% | 🔵 50%","violet");
     }
 
-    document.getElementById("result").innerHTML = r;
 }
 
 </script>
 
 </body>
-</html>
+    </html>
