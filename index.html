@@ -2,120 +2,96 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>AVIATOR PREDICT</title>
+<title>TSIX VIP PRO</title>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js"></script>
 
 <style>
 body{
-    background:#0b1220;
+    font-family: Arial;
+    background:#0f172a;
     color:white;
-    font-family:Arial;
+    text-align:center;
     padding:20px;
 }
 
 .container{
     max-width:400px;
     margin:auto;
-}
-
-.title{
-    text-align:center;
-    font-size:22px;
-    margin-bottom:10px;
-}
-
-.note{
-    color:red;
-    font-size:14px;
+    background:#1e293b;
+    padding:20px;
+    border-radius:15px;
     margin-bottom:20px;
 }
 
-input{
+input,button{
     width:100%;
-    padding:15px;
+    padding:12px;
     margin-top:10px;
-    border-radius:15px;
+    border-radius:10px;
     border:none;
-    background:#1c2435;
-    color:white;
-    font-size:18px;
 }
 
 button{
-    width:100%;
-    padding:15px;
-    margin-top:20px;
-    border:none;
-    border-radius:20px;
-    background:#7c3aed;
+    background:#22c55e;
     color:white;
-    font-size:20px;
+    font-weight:bold;
+}
+
+#app{
+    display:none;
 }
 
 .result{
-    margin-top:20px;
-}
-
-.box{
-    border:1px dashed #444;
+    background:#334155;
+    margin-top:15px;
     padding:15px;
-    margin-top:10px;
-    border-radius:15px;
-}
-
-.card{
-    background:#2a1e5c;
-    padding:15px;
-    border-radius:20px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    font-size:18px;
-}
-
-.violet{
-    background:#5b21b6;
-}
-
-.bleu{
-    background:#1d4ed8;
-}
-
-.big{
-    font-size:20px;
-    font-weight:bold;
+    border-radius:10px;
+    text-align:left;
+    white-space:pre-line;
 }
 </style>
-
 </head>
 
 <body>
 
-<div class="container">
-
-<div id="login">
-    <h2>Mot de passe</h2>
-    <input type="password" id="pass" placeholder="Ampidiro ny mot de passe">
-    <button onclick="checkPass()">Entrer</button>
+<!-- 🔐 LOGIN -->
+<div class="container" id="login">
+    <h3>- VIP<br>- Virtuel English league</h3>
+    <input type="password" id="pass" placeholder="Mot de passe">
+    <button onclick="login()">Entrer</button>
 </div>
 
-<div id="app" style="display:none">
+<!-- 📱 APP -->
+<div id="app">
 
-    <div class="title">AVIATOR PREDICT</div>
+<!-- ⚽ FOOTBALL -->
+<div class="container">
+    <h2>⚽ TSIX PRO PREDICTOR</h2>
 
-    <div class="note">
+    <input type="file" accept="image/*" onchange="loadImage(event)">
+    <img id="img" width="100%" style="margin-top:10px;border-radius:10px;">
+
+    <button onclick="analyze()">Analyser</button>
+    <div class="result" id="result"></div>
+</div>
+
+<!-- ✈️ AVIATOR -->
+<div class="container">
+
+    <h2>✈️ AVIATOR PREDICT</h2>
+
+    <p style="color:red;">
         - Natao hanampy anao<br>
         - Ra misy tsy mazava dia mandefasa mp @ TSIX na Laroka man
-    </div>
+    </p>
 
-    <label>Ora (HH:MM:SS)</label>
-    <input id="time" placeholder="12:19:50">
+    <input id="time" placeholder="Ora (12:19:50)">
+    <input id="coteA" placeholder="Cote (1.75)">
 
-    <label>Cote</label>
-    <input id="cote" placeholder="1.75">
+    <button onclick="predictAviator()">PREDICT</button>
 
-    <button onclick="predict()">PREDICT</button>
-
-    <div class="result" id="result"></div>
+    <div class="result" id="aviatorResult"></div>
 
 </div>
 
@@ -123,83 +99,150 @@ button{
 
 <script>
 
-function checkPass(){
-    let p = document.getElementById("pass").value;
-    if(p==="Tsix56"){
+/* LOGIN */
+function login(){
+    let password = document.getElementById("pass").value;
+
+    if(password === "56Tsix"){
         document.getElementById("login").style.display="none";
         document.getElementById("app").style.display="block";
     }else{
-        alert("Diso mot de passe");
+        alert("Mot de passe diso ❌");
     }
 }
 
-function addTime(time, sec){
-    let t = time.split(":");
-    let date = new Date();
-    date.setHours(t[0]);
-    date.setMinutes(t[1]);
-    date.setSeconds(t[2]);
-
-    date.setSeconds(date.getSeconds()+sec);
-
-    return date.toTimeString().split(" ")[0];
+/* IMAGE */
+function loadImage(e){
+    let reader = new FileReader();
+    reader.onload = function(){
+        document.getElementById("img").src = reader.result;
+    }
+    reader.readAsDataURL(e.target.files[0]);
 }
 
-function predict(){
+/* FOOTBALL STRATEGY */
+function strategy(cote1,cote2){
+
+    let fav = cote1 < cote2 ? "Equipe 1" : "Equipe 2";
+    let min = Math.min(cote1,cote2);
+
+    if(min < 1.40){
+        return `✔️ Mandresy: ${fav}
+🎯 3-0 (50%)
+🎯 4-0 (50%)
+⚽ 3–4+ buts`;
+    }
+
+    if(min < 1.60){
+        return `✔️ Mandresy: ${fav}
+🎯 2-0 (60%)
+🎯 2-1 (40%)
+⚽ 2–3 buts`;
+    }
+
+    if(min < 2.00){
+        return `✔️ Mandresy: ${fav}
+🎯 2-1 (55%)
+🎯 3-1 (45%)
+⚽ 2–4 buts`;
+    }
+
+    return `⚖️ Double chance
+🎯 1-1 (60%)
+🎯 1-2 (40%)
+⚽ 2–3 buts`;
+}
+
+/* OCR */
+function analyze(){
+
+    let img = document.getElementById("img");
+
+    Tesseract.recognize(img,'eng')
+    .then(res=>{
+
+        let text = res.data.text;
+        let numbers = text.match(/\d+\.\d+/g);
+
+        if(!numbers){
+            document.getElementById("result").innerText = "❌ Tsy hita ny cote";
+            return;
+        }
+
+        let output = "";
+
+        for(let i=0;i<numbers.length;i+=2){
+
+            let c1 = parseFloat(numbers[i]);
+            let c2 = parseFloat(numbers[i+1]);
+
+            if(!c2) break;
+
+            output += `MATCH ${i/2+1}\n`;
+            output += strategy(c1,c2) + "\n\n";
+        }
+
+        document.getElementById("result").innerText = output;
+
+    });
+}
+
+/* AVIATOR */
+function addTime(time, sec){
+    let t = time.split(":");
+    let d = new Date();
+    d.setHours(t[0]);
+    d.setMinutes(t[1]);
+    d.setSeconds(t[2]);
+    d.setSeconds(d.getSeconds()+sec);
+    return d.toTimeString().split(" ")[0];
+}
+
+function predictAviator(){
+
     let time = document.getElementById("time").value;
-    let cote = parseFloat(document.getElementById("cote").value);
-    let res = document.getElementById("result");
+    let cote = parseFloat(document.getElementById("coteA").value);
+    let res = document.getElementById("aviatorResult");
 
     if(!time || isNaN(cote)){
         alert("Fenoy tsara");
         return;
     }
 
-    res.innerHTML="";
+    res.innerHTML = "";
 
-    function show(t, txt, color){
+    function show(t, txt){
         res.innerHTML += `
-        <div class="box">
-            <div class="card ${color}">
-                <span class="big">${t}</span>
-                <span>${txt}</span>
-            </div>
+        <div style="margin-top:10px;background:#1e293b;padding:10px;border-radius:10px">
+            <b>${t}</b> → ${txt}
         </div>`;
     }
 
-    // === STRATEGIE ===
-
     if(cote >= 10){
-        show(addTime(time,64),"🟣 Tour violet","violet");
-        show(addTime(time,80),"🔵 Tour bleu","bleu");
-        show(addTime(time,140),"🟣 Tour violet","violet");
+        show(addTime(time,64),"🟣 Violet");
+        show(addTime(time,80),"🔵 Bleu");
+        show(addTime(time,140),"🟣 Violet");
     }
-
     else if(cote >=5){
-        show(addTime(time,80),
-        "🟣 60% | 🌸 30% | 🔴 40% | 🔵 30%","violet");
-        show(addTime(time,140),"🟣 Tour violet","violet");
+        show(addTime(time,80),"🟣60% 🔵30%");
+        show(addTime(time,140),"🟣 Violet");
     }
-
     else if(cote >=2){
-        show(addTime(time,60),"🟣 Tour violet","violet");
-        show(addTime(time,80),"🟣 Tour violet","violet");
-        show(addTime(time,140),"🟣 60%","violet");
+        show(addTime(time,60),"🟣 Violet");
+        show(addTime(time,80),"🟣 Violet");
+        show(addTime(time,140),"🟣60%");
     }
-
     else if(cote >=1.5){
-        show(addTime(time,80),"🟣 Tour violet","violet");
-        show(addTime(time,140),"🟣 Tour violet","violet");
+        show(addTime(time,80),"🟣 Violet");
+        show(addTime(time,140),"🟣 Violet");
     }
-
     else{
-        show(addTime(time,80),"🟣 50% | 🔵 50%","violet");
-        show(addTime(time,140),"🟣 50% | 🔵 50%","violet");
+        show(addTime(time,80),"🟣50% 🔵50%");
+        show(addTime(time,140),"🟣50% 🔵50%");
     }
-
 }
 
 </script>
 
 </body>
-    </html>
+</html>
