@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>TSIX PRO + AVIATOR</title>
+<title>TSIX VIP PRO</title>
 
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js"></script>
 
@@ -33,9 +33,10 @@ button{background:#22c55e;color:white;}
 .result{margin-top:15px;}
 .card{
     background:#1f2937;
-    padding:10px;
-    border-radius:10px;
+    padding:12px;
+    border-radius:12px;
     margin-top:10px;
+    line-height:1.5;
 }
 </style>
 </head>
@@ -46,7 +47,7 @@ button{background:#22c55e;color:white;}
 <div class="box" id="login1">
     <h2>- VIP<br>- Virtuel English league</h2>
     <input type="password" id="pass1" placeholder="Mot de passe">
-    <button onclick="login1()">Entrer</button>
+    <button onclick="loginTsix()">Entrer</button>
 </div>
 
 <div class="box" id="app1" style="display:none">
@@ -61,9 +62,9 @@ button{background:#22c55e;color:white;}
 
 <!-- ================= AVIATOR ================= -->
 <div class="box" id="login2">
-    <h2>AVIATOR</h2>
+    <h2>✈️ AVIATOR VIP</h2>
     <input type="password" id="pass2" placeholder="Mot de passe">
-    <button onclick="login2()">Entrer</button>
+    <button onclick="loginAviator()">Entrer</button>
 </div>
 
 <div class="box" id="app2" style="display:none">
@@ -73,32 +74,40 @@ button{background:#22c55e;color:white;}
     <input id="time" placeholder="12:19:50">
     <input id="cote" placeholder="1,75">
 
-    <button onclick="predict()">PREDICT</button>
+    <button onclick="predictAviator()">PREDICT</button>
 
     <div id="out2" class="result"></div>
+
 </div>
 
 <script>
 
-// LOGIN
-function login1(){
-    if(document.getElementById("pass1").value==="56Tsix"){
-        login1.style.display="none";
-        app1.style.display="block";
-    }else alert("Diso");
+// ================= LOGIN =================
+function loginTsix(){
+    let p=document.getElementById("pass1").value;
+    if(p==="56Tsix"){
+        document.getElementById("login1").style.display="none";
+        document.getElementById("app1").style.display="block";
+    }else{
+        alert("Diso mot de passe");
+    }
 }
 
-function login2(){
-    if(document.getElementById("pass2").value==="Tsix56"){
-        login2.style.display="none";
-        app2.style.display="block";
-    }else alert("Diso");
+function loginAviator(){
+    let p=document.getElementById("pass2").value;
+    if(p==="Tsix56"){
+        document.getElementById("login2").style.display="none";
+        document.getElementById("app2").style.display="block";
+    }else{
+        alert("Diso mot de passe");
+    }
 }
 
-// ================= TSIX PRO ANALYSE =================
+// ================= TSIX PRO (OCR + STRATEGIE V4) =================
 function analyze(){
-    let file = document.getElementById("img").files[0];
-    let out = document.getElementById("out1");
+
+    let file=document.getElementById("img").files[0];
+    let out=document.getElementById("out1");
 
     if(!file){
         alert("Asio sary");
@@ -108,70 +117,80 @@ function analyze(){
     out.innerHTML="Analyse...";
 
     Tesseract.recognize(file,'eng').then(res=>{
-        let text = res.data.text;
 
-        // simple detection odds
-        let matches = text.match(/\d+[.,]\d+/g);
+        let text=res.data.text;
 
-        if(!matches){
+        let odds=text.match(/\d+[.,]\d+/g);
+
+        if(!odds){
             out.innerHTML="Tsy voavaky tsara ilay sary";
             return;
         }
 
         out.innerHTML="";
 
-        matches.forEach((m,i)=>{
+        odds.forEach(o=>{
 
-            let odd = parseFloat(m.replace(",","."));
+            let cote=parseFloat(o.replace(/,/g,"."));
 
             let win="",but="",score="";
 
-            // 🔥 STRATEGIE VAOVAO (FIX)
-            if(odd < 1.40){
-                win="Favori";
-                but="2-4 buts";
+            // 🔥 STRATEGIE TSIX PRO V4
+            if(cote <=1.30){
+                win="Favori matanjaka (WIN)";
+                but="2 - 4 buts";
                 score="2-0 / 3-0 / 3-1";
             }
-            else if(odd < 2){
-                win="Favori malemy";
-                but="2-3 buts";
+            else if(cote <=1.70){
+                win="Favori (WIN)";
+                but="2 - 3 buts";
                 score="2-1 / 2-0 / 3-1";
             }
-            else if(odd < 3){
-                win="Match ouvert";
-                but="2-4 buts";
-                score="1-1 / 2-1 / 1-2";
+            else if(cote <=2.50){
+                win="Match ouvert (BTTS)";
+                but="2 - 4 buts";
+                score="1-1 / 2-1 / 2-2";
             }
             else{
                 win="Surprise possible";
-                but="1-3 buts";
-                score="0-1 / 1-2 / 1-1";
+                but="1 - 3 buts";
+                score="1-2 / 0-1 / 1-1";
             }
 
             out.innerHTML += `
             <div class="card">
-            🔢 Cote: ${odd}<br>
+            🔢 Cote: ${cote}<br>
             🏆 ${win}<br>
-            ⚽ ${but}<br>
-            🎯 ${score}
-            </div>`;
+            ⚽ Nombre de but: ${but}<br>
+            🎯 Score zone: ${score}
+            </div>
+            `;
+
         });
 
     });
+
 }
 
-// ================= AVIATOR =================
+// ================= AVIATOR (STRATEGIE ORIGINAL + FIX) =================
+
 function addTime(time,sec){
     let t=time.split(":");
     let d=new Date();
-    d.setHours(t[0],t[1],t[2]);
+
+    d.setHours(parseInt(t[0]));
+    d.setMinutes(parseInt(t[1]));
+    d.setSeconds(parseInt(t[2]));
+
     d.setSeconds(d.getSeconds()+sec);
+
     return d.toTimeString().split(" ")[0];
 }
 
-function predict(){
+function predictAviator(){
+
     let time=document.getElementById("time").value;
-    let cote=parseFloat(document.getElementById("cote").value.replace(",",".")); // virgule OK
+    let cote=parseFloat(document.getElementById("cote").value.replace(/,/g,"."));
     let out=document.getElementById("out2");
 
     if(!time || isNaN(cote)){
@@ -185,26 +204,36 @@ function predict(){
         out.innerHTML += `<div class="card">${t} → ${txt}</div>`;
     }
 
-    // STRATEGIE AVIATOR (tsy novaina)
-    if(cote>=10){
-        show(addTime(time,64),"Violet");
-        show(addTime(time,80),"Bleu");
-        show(addTime(time,140),"Violet");
+    // 🔥 STRATEGIE AVIATOR (TSY NOVAINA)
+    if(cote >= 10){
+        show(addTime(time,64),"🟣 Tour violet");
+        show(addTime(time,80),"🔵 Tour bleu");
+        show(addTime(time,140),"🟣 Tour violet");
     }
-    else if(cote>=5){
-        show(addTime(time,80),"Mix");
-        show(addTime(time,140),"Violet");
+
+    else if(cote >=5){
+        show(addTime(time,80),"🟣 60% | 🌸 30% | 🔴 40% | 🔵 30%");
+        show(addTime(time,140),"🟣 Tour violet");
     }
-    else if(cote>=2){
-        show(addTime(time,60),"Violet");
-        show(addTime(time,80),"Violet");
+
+    else if(cote >=2){
+        show(addTime(time,60),"🟣 Tour violet");
+        show(addTime(time,80),"🟣 Tour violet");
+        show(addTime(time,140),"🟣 60%");
     }
+
+    else if(cote >=1.5){
+        show(addTime(time,80),"🟣 Tour violet");
+        show(addTime(time,140),"🟣 Tour violet");
+    }
+
     else{
-        show(addTime(time,80),"50/50");
+        show(addTime(time,80),"🟣 50% | 🔵 50%");
+        show(addTime(time,140),"🟣 50% | 🔵 50%");
     }
 }
 
 </script>
 
 </body>
-    </html>
+</html>
