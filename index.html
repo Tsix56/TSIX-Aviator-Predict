@@ -14,7 +14,7 @@ body{
 }
 
 .container{
-    max-width:520px;
+    max-width:550px;
     margin:auto;
     background:#1e293b;
     padding:20px;
@@ -35,8 +35,9 @@ button{
     background:#7c3aed;
     color:white;
     font-weight:bold;
-    cursor:pointer;
 }
+
+#writeBox{display:none;}
 
 .result{
     background:#334155;
@@ -49,11 +50,7 @@ button{
 }
 
 /* VIRTUEL */
-.row{
-    display:flex;
-    gap:10px;
-}
-
+.row{display:flex;gap:10px;}
 .side{
     flex:1;
     background:#111827;
@@ -61,83 +58,84 @@ button{
     border-radius:15px;
 }
 
-.choiceBtn{
-    width:90px;
-    height:70px;
+.bigBtn{
+    width:110px;
+    height:75px;
     margin:5px;
-    font-size:28px;
-    border-radius:15px;
+    font-size:26px;
+    border-radius:18px;
     background:#374151;
+    color:white;
 }
 
-.choiceBtn.active{
-    background:#22c55e;
-}
+.bigBtn.active{background:#22c55e;}
 
-.titleSide{
-    font-size:20px;
-    margin-bottom:10px;
-}
-
-.red{ color:red; }
+.titleSide{font-size:20px;margin-bottom:10px;}
+.red{color:red;}
 </style>
 </head>
 
 <body>
 
 <!-- LOGIN -->
-<div class="container">
-    <h2>TSIX VIP PRO</h2>
-    <input type="password" id="pass" placeholder="Mot de passe">
-    <button onclick="login()">ENTRER</button>
+<div class="container" id="login">
+<h2>TSIX VIP PRO</h2>
+<input type="password" id="pass" placeholder="Mot de passe">
+<button onclick="login()">ENTRER</button>
 </div>
 
-<!-- WRITE BOX (Tsitsi only) -->
-<div class="container" id="writeBox" style="display:none;">
-    <h3>✍️ Mpanoratra (Tsitsi)</h3>
-    <textarea id="message" placeholder="Soraty eto..."></textarea>
-    <button onclick="sendMessage()">Alefa</button>
+<!-- APP -->
+<div id="app">
+
+<!-- WRITE (Tsitsi only) -->
+<div class="container" id="writeBox">
+<h3>✍️ Mpanoratra (Tsitsi)</h3>
+<textarea id="message" placeholder="Soraty eto..."></textarea>
+<button onclick="sendMessage()">Alefa</button>
 </div>
 
 <!-- POSTS -->
 <div class="container">
-    <h2>💬 Messages</h2>
-    <div id="posts"></div>
+<h2>💬 Messages</h2>
+<div id="posts"></div>
 </div>
 
 <!-- VIRTUEL -->
 <div class="container">
-<h2>⚽ VIRTUEL PREDICT</h2>
+<h2>⚽ VIRTUEL PREDICT PRO</h2>
 
 <div class="row">
+
 <div class="side">
 <div class="titleSide">1</div>
 
-<button class="choiceBtn" onclick="selectBtn('left','type','Pc',this)">Pc</button>
-<button class="choiceBtn" onclick="selectBtn('left','type','Gc',this)">Gc</button>
+<button class="bigBtn" onclick="setVal('l','type','Pc',this)">Pc</button>
+<button class="bigBtn" onclick="setVal('l','type','Gc',this)">Gc</button>
 <br>
-<button class="choiceBtn" onclick="selectBtn('left','arrow','⬆️',this)">⬆️</button>
-<button class="choiceBtn" onclick="selectBtn('left','arrow','⬇️',this)">⬇️</button>
+<button class="bigBtn" onclick="setVal('l','arrow','⬆️',this)">⬆️</button>
+<button class="bigBtn" onclick="setVal('l','arrow','⬇️',this)">⬇️</button>
 <br>
-<button class="choiceBtn" onclick="selectBtn('left','sign','✅',this)">✅</button>
-<button class="choiceBtn" onclick="selectBtn('left','sign','✖️',this)">✖️</button>
-<button class="choiceBtn" onclick="selectBtn('left','sign','➖',this)">➖</button>
+<button class="bigBtn" onclick="setVal('l','sign','➖',this)">➖</button>
+<button class="bigBtn" onclick="setVal('l','sign','✖️',this)">✖️</button>
+<button class="bigBtn" onclick="setVal('l','sign','✅',this)">✅</button>
+
 </div>
 
 <div class="side">
 <div class="titleSide">2</div>
 
-<button class="choiceBtn" onclick="selectBtn('right','type','Pc',this)">Pc</button>
-<button class="choiceBtn" onclick="selectBtn('right','type','Gc',this)">Gc</button>
+<button class="bigBtn" onclick="setVal('r','type','Pc',this)">Pc</button>
+<button class="bigBtn" onclick="setVal('r','type','Gc',this)">Gc</button>
 <br>
-<button class="choiceBtn" onclick="selectBtn('right','arrow','⬆️',this)">⬆️</button>
-<button class="choiceBtn" onclick="selectBtn('right','arrow','⬇️',this)">⬇️</button>
+<button class="bigBtn" onclick="setVal('r','arrow','⬆️',this)">⬆️</button>
+<button class="bigBtn" onclick="setVal('r','arrow','⬇️',this)">⬇️</button>
 <br>
-<button class="choiceBtn" onclick="selectBtn('right','sign','✅',this)">✅</button>
-<button class="choiceBtn" onclick="selectBtn('right','sign','✖️',this)">✖️</button>
-<button class="choiceBtn" onclick="selectBtn('right','sign','➖',this)">➖</button>
+<button class="bigBtn" onclick="setVal('r','sign','➖',this)">➖</button>
+<button class="bigBtn" onclick="setVal('r','sign','✖️',this)">✖️</button>
+<button class="bigBtn" onclick="setVal('r','sign','✅',this)">✅</button>
 
 </div>
+
 </div>
 
 <button onclick="predictVirtuel()">PREDICT</button>
@@ -146,12 +144,7 @@ button{
 
 <!-- AVIATOR -->
 <div class="container">
-<h2>✈️ AVIATOR PREDICT</h2>
-
-<p class="red">
-- Natao hanampy anao<br>
-- Araho tsara ny valiny
-</p>
+<h2>✈️ AVIATOR PREDICT PRO</h2>
 
 <input id="time" placeholder="12:19:50">
 <input id="coteA" placeholder="1.75">
@@ -162,134 +155,150 @@ button{
 
 <!-- FOOTER -->
 <div class="container">
-<p>
-👉 araho ito pejy ito: <br>
+👉 araho ito pejy ito:<br>
 https://www.facebook.com/profile.php?id=61579106375751
-</p>
+</div>
+
 </div>
 
 <script>
 
 /* LOGIN */
-let role = "";
+let role="";
 
 function login(){
-    let p = document.getElementById("pass").value;
+    let p=document.getElementById("pass").value;
 
-    if(p === "Larokaman"){
-        role = "viewer";
-        alert("Mode mpijery 👀");
-        document.getElementById("writeBox").style.display="none";
+    if(p==="larokaman"){
+        role="viewer";
+        document.getElementById("login").style.display="none";
+        document.getElementById("app").style.display="block";
     }
-    else if(p === "Tsitsi"){
-        role = "admin";
-        alert("Mode mpanoratra ✍️");
+    else if(p==="tsitsi"){
+        role="admin";
+        document.getElementById("login").style.display="none";
+        document.getElementById("app").style.display="block";
         document.getElementById("writeBox").style.display="block";
     }
-    else{
-        alert("Mot de passe diso ❌");
-    }
+    else alert("Mot de passe diso ❌");
 }
 
-/* WRITE */
+/* MESSAGE */
 function sendMessage(){
-    if(role !== "admin"){
-        alert("Tsy mahazo manoratra ianao ❌");
-        return;
-    }
+    if(role!=="admin") return;
 
-    let text = document.getElementById("message").value;
-    if(!text) return;
+    let t=document.getElementById("message").value;
+    if(!t)return;
 
-    let div = document.createElement("div");
-    div.className="result";
-    div.innerText=text;
+    let d=document.createElement("div");
+    d.className="result";
+    d.innerText=t;
 
-    document.getElementById("posts").appendChild(div);
-    document.getElementById("message").value="";
+    document.getElementById("posts").appendChild(d);
 }
 
 /* VIRTUEL */
-let left={}, right={};
+let L={},R={};
 
-function selectBtn(side,cat,val,el){
-    let obj = side==="left"?left:right;
-
-    if(cat==="type"){
-        obj.type=val;
-    }
-    if(cat==="arrow"){
-        obj.arrow=val;
-    }
-    if(cat==="sign"){
-        obj.sign=val;
-    }
-
-    el.classList.add("active");
+function setVal(s,c,v,e){
+    let o=s==="l"?L:R;
+    o[c]=v;
+    e.classList.add("active");
 }
 
-const rules = {
+/* STRATEGIE FENO (copie-nao) */
+const rules={
+
 "Gc⬆️➖|Pc⬇️➖":"1 boom🏅",
 "Pc⬆️➖|Gc⬇️➖":"Tsy mbola misy strategie 😭",
 "Gc⬇️➖|Pc⬆️➖":"Match nul 👌",
 "Pc⬇️➖|Gc⬆️➖":"1 boom🏅",
+
 "Gc⬆️✖️|Pc⬇️➖":"1 boom🏅",
 "Pc⬆️✖️|Gc⬇️➖":"1 boom🏅",
+"Gc⬇️✖️|Pc⬆️➖":"1 boom🏅",
+"Pc⬇️✖️|Gc⬆️➖":"1 boom🏅",
+
 "Gc⬇️➖|Pc⬆️✖️":"2 boom🏅",
-"Pc⬇️➖|Gc⬆️✖️":"2 boom🏅"
+"Pc⬇️➖|Gc⬆️✖️":"2 boom🏅",
+
+"Pc⬆️➖|Gc⬇️➖":"Tsy mbola misy strategie 😭",
+"Pc⬆️➖|Gc⬇️✖️":"Tsy mbola misy strategie 😭",
+
+"Gc⬆️➖|Pc⬇️✖️":"Tsy mbola misy strategie 😭",
+
+"Gc⬆️✅|Pc⬇️➖":"Tsy mbola misy strategie 😭",
+"Pc⬆️✅|Gc⬇️➖":"Tsy mbola misy strategie 😭",
+"Pc⬇️➖|Gc⬆️✅":"Tsy mbola misy strategie 😭",
+"Gc⬇️➖|Pc⬆️✅":"2 boom🏅",
+
+"Pc⬆️➖|Gc⬇️✅":"1 boom🏅",
+
+"Gc⬆️✖️|Pc⬇️✖️":"1x boom 🏅 match nul possible 👌",
+"Pc⬆️✖️|Gc⬇️✖️":"1x boom 🏅 match nul possible 👌"
 };
 
+/* VIRTUEL */
 function predictVirtuel(){
 
-    if(!left.type||!left.arrow||!left.sign||!right.type||!right.arrow||!right.sign){
-        alert("Fenoy tsara");
-        return;
-    }
-
-    let key = left.type+left.arrow+left.sign+"|"+right.type+right.arrow+right.sign;
-
-    document.getElementById("virtuelResult").innerHTML =
-    `<div style="font-size:26px;font-weight:bold">${rules[key] || "Tsy mbola misy strategie 😭"}</div>`;
+if(!L.type||!L.arrow||!L.sign||!R.type||!R.arrow||!R.sign){
+alert("Fenoy tsara");
+return;
 }
 
-/* AVIATOR */
-function addTime(time, sec){
-    let t=time.split(":");
-    let d=new Date();
-    d.setHours(t[0]); d.setMinutes(t[1]); d.setSeconds(t[2]);
-    d.setSeconds(d.getSeconds()+sec);
-    return d.toTimeString().split(" ")[0];
+let key=L.type+L.arrow+L.sign+"|"+R.type+R.arrow+R.sign;
+
+document.getElementById("virtuelResult").innerHTML=
+`<div style="font-size:26px;font-weight:bold">${rules[key]||"Tsy mbola misy strategie 😭"}</div>`;
+}
+
+/* AVIATOR PRO (FENO SAFE + MULTI OUTPUT) */
+function addTime(time,sec){
+let t=time.split(":");
+let d=new Date();
+d.setHours(t[0]);d.setMinutes(t[1]);d.setSeconds(t[2]);
+d.setSeconds(d.getSeconds()+sec);
+return d.toTimeString().split(" ")[0];
 }
 
 function predictAviator(){
-    let time=document.getElementById("time").value;
-    let cote=parseFloat(document.getElementById("coteA").value);
 
-    if(!time||isNaN(cote)){
-        alert("Fenoy tsara");
-        return;
-    }
+let time=document.getElementById("time").value;
+let cote=parseFloat(document.getElementById("coteA").value);
 
-    let res=document.getElementById("aviatorResult");
-    res.innerHTML="";
+if(!time||isNaN(cote)){
+alert("Fenoy tsara");
+return;
+}
 
-    function show(t,x){
-        res.innerHTML+=`<div class="result"><b>${t}</b> → ${x}</div>`;
-    }
+let r=document.getElementById("aviatorResult");
+r.innerHTML="";
 
-    if(cote>=10){
-        show(addTime(time,64),"🟣 Violet");
-        show(addTime(time,80),"🔵 Bleu");
-    }
-    else if(cote>=5){
-        show(addTime(time,80),"🟣60% 🔵30%");
-    }
-    else{
-        show(addTime(time,80),"🟣50% 🔵50%");
-    }
+function show(t,x){
+r.innerHTML+=`<div class="result"><b>${t}</b> → ${x}</div>`;
+}
+
+/* FULL LOGIC PRO */
+if(cote>=10){
+show(addTime(time,40),"🟣 VIOLET HIGH");
+show(addTime(time,70),"🔵 BLUE SAFE");
+show(addTime(time,110),"🟣 VIOLET CONFIRM");
+}
+else if(cote>=5){
+show(addTime(time,60),"🟣 60% VIOLET");
+show(addTime(time,100),"🔵 40% BLUE");
+}
+else if(cote>=2){
+show(addTime(time,80),"🟣 TREND VIOLET");
+show(addTime(time,130),"🟣 STABLE PATTERN");
+}
+else{
+show(addTime(time,100),"🟣 RANDOM ZONE");
+show(addTime(time,160),"🔵 RANDOM ZONE");
+}
 }
 
 </script>
 
 </body>
-    </html>
+</html>
